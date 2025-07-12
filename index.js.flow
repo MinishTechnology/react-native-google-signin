@@ -13,10 +13,12 @@ export type ConfigureParams = $ReadOnly<{|
   accountName?: string,
   openIdRealm?: string,
   profileImageSize?: number,
+  nonce?: string,
 |}>;
 
 export type SignInParams = $ReadOnly<{|
   loginHint?: string,
+  nonce?: string,
 |}>;
 
 export type AddScopesParams = $ReadOnly<{|
@@ -34,7 +36,9 @@ export type GoogleSigninButtonProps = $ReadOnly<{|
   onPress?: () => any,
 |}>;
 
-declare export class GoogleSigninButton extends React.Component<GoogleSigninButtonProps> {
+declare export class GoogleSigninButton
+  extends React.Component<GoogleSigninButtonProps>
+{
   static Size: {
     Icon: number,
     Standard: number,
@@ -81,16 +85,16 @@ type StatusCodes = $ReadOnly<{
 declare export var statusCodes: StatusCodes;
 
 export type SignInSuccessResponse = {|
-  type: 'success';
-  data: User;
+  type: 'success',
+  data: User,
 |};
 export type CancelledResponse = {|
-  type: 'cancelled';
-  data: null;
+  type: 'cancelled',
+  data: null,
 |};
 export type NoSavedCredentialFound = {|
-  type: 'noSavedCredentialFound';
-  data: null;
+  type: 'noSavedCredentialFound',
+  data: null,
 |};
 export type SignInResponse = SignInSuccessResponse | CancelledResponse;
 export type SignInSilentlyResponse =

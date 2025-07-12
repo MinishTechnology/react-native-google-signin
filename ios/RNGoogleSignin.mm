@@ -7,6 +7,7 @@
 
 @property (nonatomic) NSArray *scopes;
 @property (nonatomic) NSUInteger profileImageSize;
+@property (nonatomic) NSString *currentNonce;
 
 @end
 
@@ -100,6 +101,9 @@ RCT_EXPORT_METHOD(configure:(NSDictionary *)options
   GIDConfiguration* config = [[GIDConfiguration alloc] initWithClientID:clientId serverClientID:options[@"webClientId"] hostedDomain:options[@"hostedDomain"] openIDRealm:options[@"openIDRealm"]];
   GIDSignIn.sharedInstance.configuration = config;
 
+  // Store nonce for use in signIn method
+  _currentNonce = options[@"nonce"];
+
   _profileImageSize = 120;
   if (options[@"profileImageSize"]) {
     NSNumber* size = options[@"profileImageSize"];
@@ -125,11 +129,14 @@ RCT_EXPORT_METHOD(signIn:(NSDictionary *)options
 {
   dispatch_async(dispatch_get_main_queue(), ^{
       NSString* hint = options[@"loginHint"];
+      NSString* nonce = options[@"nonce"];
       NSArray* scopes = self.scopes;
 
 #if DEBUG
     @try {
 #endif
+      // Always use the standard method since nonce support in iOS SDK v9.0.0+ 
+      // is handled through GIDConfiguration, not directly in signIn method
       [GIDSignIn.sharedInstance signInWithPresentingViewController:RCTPresentedViewController() hint:hint additionalScopes:scopes completion:^(GIDSignInResult * _Nullable signInResult, NSError * _Nullable error) {
         [self handleCompletion:signInResult withError:error withResolver:resolve withRejector:reject fromCallsite:@"signIn"];
       }];

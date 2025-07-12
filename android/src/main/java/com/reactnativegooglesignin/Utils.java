@@ -58,7 +58,8 @@ public class Utils {
             final boolean offlineAccess,
             final boolean forceCodeForRefreshToken,
             final String accountName,
-            final String hostedDomain
+            final String hostedDomain,
+            final String nonce
     ) {
         GoogleSignInOptions.Builder googleSignInOptionsBuilder = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestScopes(new Scope(Scopes.EMAIL), scopes);
@@ -74,6 +75,15 @@ public class Utils {
         if (hostedDomain != null && !hostedDomain.isEmpty()) {
             googleSignInOptionsBuilder.setHostedDomain(hostedDomain);
         }
+        
+        // Note: Legacy Google Sign-In SDK does not support nonce parameter directly.
+        // For nonce support, consider migrating to Google's Credential Manager API.
+        // The nonce parameter is accepted here for API compatibility but is not used.
+        if (nonce != null && !nonce.isEmpty()) {
+            // Log warning about nonce not being supported in legacy SDK
+            android.util.Log.w("RNGoogleSignin", "Nonce parameter provided but not supported in legacy Google Sign-In SDK. Consider migrating to Credential Manager API for nonce support.");
+        }
+        
         return googleSignInOptionsBuilder.build();
     }
 

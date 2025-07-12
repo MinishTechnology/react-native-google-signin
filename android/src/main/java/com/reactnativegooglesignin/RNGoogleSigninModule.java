@@ -131,8 +131,9 @@ public class RNGoogleSigninModule extends NativeGoogleSigninSpec {
         final boolean forceCodeForRefreshToken = config.hasKey("forceCodeForRefreshToken") && config.getBoolean("forceCodeForRefreshToken");
         final String accountName = config.hasKey("accountName") ? config.getString("accountName") : null;
         final String hostedDomain = config.hasKey("hostedDomain") ? config.getString("hostedDomain") : null;
+        final String nonce = config.hasKey("nonce") ? config.getString("nonce") : null;
 
-        GoogleSignInOptions options = getSignInOptions(createScopesArray(scopes), webClientId, offlineAccess, forceCodeForRefreshToken, accountName, hostedDomain);
+        GoogleSignInOptions options = getSignInOptions(createScopesArray(scopes), webClientId, offlineAccess, forceCodeForRefreshToken, accountName, hostedDomain, nonce);
         _apiClient = GoogleSignIn.getClient(getReactApplicationContext(), options);
         promise.resolve(null);
     }
@@ -186,6 +187,13 @@ public class RNGoogleSigninModule extends NativeGoogleSigninSpec {
             rejectWithNullActivity(promise);
             return;
         }
+        
+        // Extract nonce from config if provided
+        final String nonce = config.hasKey("nonce") ? config.getString("nonce") : null;
+        if (nonce != null && !nonce.isEmpty()) {
+            Log.w(NAME, "Nonce parameter provided but not supported in legacy Google Sign-In SDK. Consider migrating to Credential Manager API for nonce support.");
+        }
+        
         signInOrAddScopesPromiseWrapper.setPromiseWithInProgressCheck(promise, "signIn");
         UiThreadUtil.runOnUiThread(() -> {
             Intent signInIntent = _apiClient.getSignInIntent();

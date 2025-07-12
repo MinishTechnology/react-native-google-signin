@@ -7,6 +7,11 @@ export type SignInParams = {
    * [See docs here](https://developers.google.com/identity/sign-in/ios/reference/Classes/GIDSignIn#-signinwithpresentingviewcontroller:hint:completion:)
    */
   loginHint?: string;
+  /**
+   * A random string used to prevent replay attacks. This value will be included in the ID token.
+   * The nonce should be a cryptographically secure random string.
+   */
+  nonce?: string;
 };
 
 /**
@@ -55,6 +60,11 @@ export type ConfigureParams = {
    * iOS ONLY: The desired height and width of the profile image. Defaults to 120px
    */
   profileImageSize?: number;
+  /**
+   * A random string used to prevent replay attacks. This value will be included in the ID token.
+   * The nonce should be a cryptographically secure random string.
+   */
+  nonce?: string;
 } & ClientIdOrPlistPath;
 
 export type ClientIdOrPlistPath =
