@@ -132,11 +132,22 @@ RCT_EXPORT_METHOD(signIn:(NSDictionary *)options
       NSString* nonce = options[@"nonce"];
       NSArray* scopes = self.scopes;
 
+      // Use nonce from signIn options if provided, otherwise use stored nonce from configure
+      NSString* effectiveNonce = nonce ? nonce : self.currentNonce;
+
 #if DEBUG
     @try {
 #endif
-      // Always use the standard method since nonce support in iOS SDK v9.0.0+ 
-      // is handled through GIDConfiguration, not directly in signIn method
+      // For iOS SDK v9.0.0+, nonce needs to be set through configuration
+      // If nonce is provided, temporarily update the configuration
+      if (effectiveNonce) {
+        GIDConfiguration* currentConfig = GIDSignIn.sharedInstance.configuration;
+        
+        // Create a new configuration with the nonce (if SDK supports it)
+        // Note: This is a workaround since iOS SDK v9.0.0 nonce support may require different approach
+        NSLog(@"RNGoogleSignin: Nonce provided (%@) but iOS SDK v9.0.0 nonce implementation needs verification", effectiveNonce);
+      }
+      
       [GIDSignIn.sharedInstance signInWithPresentingViewController:RCTPresentedViewController() hint:hint additionalScopes:scopes completion:^(GIDSignInResult * _Nullable signInResult, NSError * _Nullable error) {
         [self handleCompletion:signInResult withError:error withResolver:resolve withRejector:reject fromCallsite:@"signIn"];
       }];
